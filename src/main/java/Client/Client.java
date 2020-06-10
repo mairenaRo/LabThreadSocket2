@@ -52,12 +52,19 @@ public class Client {
     private void processConection() throws IOException{
         String message = "";
         String txt = "";
+        //Leo mensaje del servidor y respondo la pelicula que desea ver
         txt = input.readUTF();
         message = JOptionPane.showInputDialog(txt);
         output.writeUTF(message);
+        //lee la descripcion de la pelicula e ingreso los asientos 
         txt = input.readUTF();
         message = JOptionPane.showInputDialog(txt);
-        output.writeUTF(message);
+        output.writeInt(Integer.parseInt(message));
+        for (int i = 0; i<=Integer.parseInt(message); i++){
+            txt = input.readUTF();
+            message = "\n"+JOptionPane.showInputDialog(txt);
+            output.writeInt(Integer.parseInt(message));
+        }
     }
     
     private void closeConnection(){
