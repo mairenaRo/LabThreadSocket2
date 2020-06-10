@@ -52,12 +52,12 @@ public class Client {
     private void processConection() throws IOException{
         String message = "";
         String txt = "";
-        output.writeUTF("hola");
-        do{
-            txt = input.readUTF();
-            message = JOptionPane.showInputDialog("Servidor\n"+txt);
-            output.writeUTF(message);
-        }while(!message.equals("fin"));
+        txt = input.readUTF();
+        message = JOptionPane.showInputDialog(txt);
+        output.writeUTF(message);
+        txt = input.readUTF();
+        message = JOptionPane.showInputDialog(txt);
+        output.writeUTF(message);
     }
     
     private void closeConnection(){
