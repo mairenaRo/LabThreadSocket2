@@ -60,11 +60,24 @@ public class Client {
         txt = input.readUTF();
         message = JOptionPane.showInputDialog(txt);
         output.writeInt(Integer.parseInt(message));
+        //Se pide la cantidad de asientos ue el cliente desea
         for (int i = 0; i<=Integer.parseInt(message); i++){
-            txt = input.readUTF();
-            message = "\n"+JOptionPane.showInputDialog(txt);
-            output.writeInt(Integer.parseInt(message));
+            boolean bought;
+            do{
+                txt = input.readUTF();
+                message = JOptionPane.showInputDialog(txt);
+                output.writeInt(Integer.parseInt(message));
+                txt = input.readUTF();
+                message = JOptionPane.showInputDialog(txt);
+                output.writeInt(Integer.parseInt(message));
+                bought = input.readBoolean();
+                if (!bought) {
+                    JOptionPane.showMessageDialog(null, input.readUTF(), "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
+            }while(!bought);
+            JOptionPane.showMessageDialog(null, input.readUTF(), "ERROR", JOptionPane.INFORMATION_MESSAGE);
         }
+        
     }
     
     private void closeConnection(){

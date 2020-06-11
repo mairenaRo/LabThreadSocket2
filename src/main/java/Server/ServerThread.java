@@ -32,6 +32,8 @@ public class ServerThread extends Thread{
     }
     
     private void processConnection() throws IOException{
+        final int PRICE = 2500;
+        int totalPrice = 0; 
         Movie movie;
         String message = "";
         String txt = "";
@@ -43,9 +45,24 @@ public class ServerThread extends Thread{
             for (int i = 0; i<= input.readInt(); i++){
                 int c = 0;
                 int f = 0;
-                output.writeUTF("Ingrese por favor la columna y luego la fila.\nL = Libre\nO = Ocupados\nS = Salvados\n"+movie.getSeatsString()+"\nIngrese la columna:");
-                c = input.readInt();
+                boolean bought;
+                do {
+                    output.writeUTF("Ingrese por favor la columna y luego la fila.\nL = Libre\nO = Ocupados\nS = Salvados\n" + movie.getSeatsString() + "\nIngrese la COLUMNA:");
+                    c = input.readInt();
+                    output.writeUTF("Ingrese por favor la columna y luego la fila.\nL = Libre\nO = Ocupados\nS = Salvados\n" + movie.getSeatsString() + "\nIngrese la FILA:");
+                    f = input.readInt();
+                    bought = movie.setSeat(f, c);
+                    output.writeBoolean(bought);
+                    if (!bought) {
+                        output.writeUTF("Asiento no seleccionable");
+                    }else{
+                        txt+=""+c+"-"+f+"\n";
+                    }
+                } while (!bought);
+                output.writeUTF("Se han apartado los asientos\n"+txt);
+                totalPrice += PRICE;
             }
+            movie.saveSeatsSelection();
         }
     }
     
