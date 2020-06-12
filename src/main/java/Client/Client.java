@@ -30,13 +30,11 @@ public class Client {
             connectionServer();
             getStreams();
             processConection();
-        } catch (EOFException ex) {
+        }catch (IOException ex) {
             ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }finally{
-            closeConnection();
         }
+        closeConnection();
+        
         
     }
     

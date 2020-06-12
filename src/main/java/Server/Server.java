@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  *
  * @author Ronny Mairena B64062
  */
-public class Server implements Runnable{
+public class Server{
     
     private ServerSocket server;
     private Socket connection;
@@ -31,9 +31,11 @@ public class Server implements Runnable{
     public void runServer(){
         try {
             server = new ServerSocket(PORT);
-            waitForConnection();
-            getStreams();
-            processConnection();
+            while(true){
+                waitForConnection();
+                ServerThread thread = new ServerThread(connection, cinema);
+                thread.start();
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -84,14 +86,14 @@ public class Server implements Runnable{
                 output.writeUTF("Se han apartado los asientos\n"+txt);
                 totalPrice += PRICE;
             }
-            output.writeUTF("Asientos seleccionados"+movie.getSeatsString());
+            output.writeUTF("Asientos seleccionados\n"+movie.getSeatsString());
             output.writeUTF("Desea confirmar su compra de "+tickets);
             int a = input.readInt();
             if(a<2){
                 movie.saveSeatsSelection();
                 output.writeUTF("¡Compra exitosa!\n"+txt+"\nPrecio total a pagar: "+totalPrice);
             }else{
-                output.writeUTF("¡Compra cancelada!");
+                output.writeUTF("Compra cancelada");
             }
         }
     }
@@ -99,8 +101,6 @@ public class Server implements Runnable{
     private void closeConnection(){
         System.out.println("Cerrando conexión...");
         try {
-            output.close();
-            input.close();
             connection.close();
             server.close();
         } catch (IOException ex) {
@@ -111,27 +111,9 @@ public class Server implements Runnable{
     public static void main(String[] args) {
         try {
             cinema = new Cinema();
-            //new Server().runServer();
-            Thread thread;
-            thread = new Thread(new Server());
-            thread.start();
+            new Server().runServer();
         } catch (CinemaException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public void run() {
-        try {
-            server = new ServerSocket(PORT);
-            while(true){
-                waitForConnection();
-                getStreams();
-                processConnection();
-            }
-        } catch (IOException ex) {
             ex.printStackTrace();
         }
-        closeConnection();
     }
 }
