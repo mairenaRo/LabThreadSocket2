@@ -8,6 +8,7 @@ package Client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import javax.swing.JOptionPane;
@@ -29,6 +30,8 @@ public class Client {
             connectionServer();
             getStreams();
             processConection();
+        } catch (EOFException ex) {
+            ex.printStackTrace();
         } catch (IOException ex) {
             ex.printStackTrace();
         }finally{
@@ -43,15 +46,15 @@ public class Client {
         System.out.println("Conexión exitosa\nConectado a "+client.getInetAddress().getHostName());
     }
     
-    private void getStreams() throws IOException{
+    private void getStreams() throws EOFException, IOException{
         output = new DataOutputStream(client.getOutputStream());
         output.flush();
         input = new DataInputStream(client.getInputStream());
     }
     
-    private void processConection() throws IOException{
-        String message = "";
-        String txt = "";
+    private void processConection() throws EOFException, IOException{
+        String message;
+        String txt;
         //Leo mensaje del servidor y respondo la pelicula que desea ver
         txt = input.readUTF();
         message = JOptionPane.showInputDialog(txt);
@@ -60,9 +63,10 @@ public class Client {
         txt = input.readUTF();
         message = JOptionPane.showInputDialog(txt);
         output.writeInt(Integer.parseInt(message));
-        //Se pide la cantidad de asientos ue el cliente desea
-        for (int i = 0; i<=Integer.parseInt(message); i++){
-            boolean bought;
+        //Se pide la cantidad de asientos que el cliente desea
+        int tickets = Integer.parseInt(message);
+        for (int i = 0; i< tickets; i++){
+            boolean bought = true;
             do{
                 txt = input.readUTF();
                 message = JOptionPane.showInputDialog(txt);
@@ -75,9 +79,12 @@ public class Client {
                     JOptionPane.showMessageDialog(null, input.readUTF(), "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
             }while(!bought);
-            JOptionPane.showMessageDialog(null, input.readUTF(), "ERROR", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, input.readUTF(), "Reservado", JOptionPane.INFORMATION_MESSAGE);
         }
-        
+        JOptionPane.showMessageDialog(null, input.readUTF(), "Reservado", JOptionPane.INFORMATION_MESSAGE);
+        int a = JOptionPane.showInternalConfirmDialog(null, input.readUTF(), "Cofirmar compra", 1, 2);
+        output.writeInt(a);
+        JOptionPane.showMessageDialog(null, input.readUTF());
     }
     
     private void closeConnection(){

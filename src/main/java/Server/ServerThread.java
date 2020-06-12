@@ -10,6 +10,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author Ronny Mairena B64062
@@ -20,6 +22,7 @@ public class ServerThread extends Thread{
     private DataOutputStream output;
     private DataInputStream input;
     private Cinema cinema;
+    private final int PRICE = 2500;
 
     public ServerThread(Socket connection) {
         this.connection = connection;
@@ -32,12 +35,12 @@ public class ServerThread extends Thread{
     }
     
     private void processConnection() throws IOException{
-        final int PRICE = 2500;
         int totalPrice = 0; 
         Movie movie;
         String message = "";
         String txt = "";
-        output.writeUTF("Bienvenido al Cine\nDijite la pelicula que desea ver."+cinema.getMoviesString()+"\nDijite S para salir");
+        message = "Bienvenido al Cine\nDijite la pelicula que desea ver."+cinema.getMoviesString()+"\nDijite S para salir";
+        output.writeUTF(message);
         message = input.readUTF();
         if (!message.equals("s")){
             movie = cinema.getMovie(Integer.parseInt(message));
@@ -63,6 +66,7 @@ public class ServerThread extends Thread{
                 totalPrice += PRICE;
             }
             movie.saveSeatsSelection();
+            output.writeUTF("¡Compra exitosa!\n"+txt+"\nPrecio total a pagar: "+totalPrice);
         }
     }
     
@@ -81,10 +85,13 @@ public class ServerThread extends Thread{
     @Override
     public void run() {
         try {
-            getStreams();
+            cinema = new Cinema();
             processConnection();
+            getStreams();
             closeConnection();
         } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (CinemaException ex) {
             ex.printStackTrace();
         }
     }
