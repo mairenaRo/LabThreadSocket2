@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.net.Socket;
 /**
  *
- * @author Ronny Mairena B64062
+ * @author Ronny Mairena B64062 y Junior Corrales B72388
  */
 public class ServerThread extends Thread{
     

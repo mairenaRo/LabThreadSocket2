@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Ronny Mairena B64062
+ * @author Ronny Mairena B64062 y Junior Corrales B72388
  */
 public class Server{
     
